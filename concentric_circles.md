@@ -6,7 +6,7 @@ We describe how we used SRP to create a spreadsheet to show this.
 ## SRP Query
 
 To determine the individuals particpating, create a Custom Report "People Engaged in An Activity".
-We used the following Data Filters:
+We used the following *Data Filters*:
 
 ```
 AND
@@ -39,7 +39,7 @@ We included the following items in the *Display Information*:
 - Currently participating in a study circle
 - Comments
 
-We used the following Sort Order:
+We used the following *Sort Order*:
 
 ```
 Sort By Focus Neighborhood Ascending
@@ -51,82 +51,95 @@ We chose this order because in reviewing the results, we assumed that it would b
 
 ## Spreadsheet
 
+### Basic Spreadsheet
+
 Once we ran the Custom Report, we exported the data to Excel.
 We cut and pasted the data (including column titles) to a new Google sheet.
 We use Google sheets to make it easier to share the final document withe specific individuals.
 
-### Additions
+### Changes to Sheet
 
 We modified the spreadsheet in order to highlight the information as follows:
 
-A. Added a column (column N) "Hosting Devotional Gathering" containg "Yes" if the Comment field contains the tag "#Host-DM". This can  be calculated from the Comments column (column M) as follows:
+- Added a column (column N) "Hosting Devotional Gathering" containg "Yes" if the Comment field contains the tag "#Host-DM". This can  be calculated from the Comments column (column M) as follows:
 
-```
-=if(REGEXmatch(M5,".*Host-DM.*"),"Yes","")
-```
+    ```
+    =if(REGEXMATCH(M5,".*Host-DM.*"),"Yes","")
+    ```
 
-B. The Comments column (column M) was hidden; we captured this information in the new column N.
+- Hide the `Comments` column (column M); the information of interest in now in the new column N.
 
-C. The Locality column (column F) was hidden becuase the data was intended for a single locality and so was the same for all rows.
+- Hid the `Locality` column (column F) becuase the data was intended for a single locality and so was the same for all rows.
 
-D. Set Text Wrapping to Wrap for all column headers and adjusted column widths to be most attractive.
+- Set *Text Wrapping* to `Wrap` for all column headers and adjust the column widths to be most attractive.
 
-E. Inserted a row about the column headers using larger text to display the number of individuals in the columns:
+- Insert a row above the column headers using larger text to display the number of individuals in the columns:
 
-A1: Shows the number of individuals included in the table, calucated as:
+    A1: Shows the number of individuals included in the table, calucated as:
 
-```
-=COUNTA(A3:A200)
-```
+    ```
+    =COUNTA(A3:A200)
+    ```
 
-C1: Shows the number of children, junior youth, youth, and adults, calculated as:
+    C1: Shows the number of children, junior youth, youth, and adults, calculated as:
 
-```
-=CONCATENATE(COUNTIF(C3:C200,"Child"),"/",COUNTIF(C3:C200,"Junior Youth"),"/",COUNTIF(C3:C200,"Youth"),"/",COUNTIF(C3:C200,"Adult"))
-```
+    ```
+    =CONCATENATE(
+        COUNTIF(C3:C200,"Child"),
+        "/",COUNTIF(C3:C200,"Junior Youth"),
+        "/",COUNTIF(C3:C200,"Youth"),
+        "/",COUNTIF(C3:C200,"Adult")
+    )
+    ```
 
-D1: Shows the number of registered Baha'is calculated as:
+    D1: Shows the number of registered Baha'is calculated as:
 
-```
-=COUNTA(D3:D200)
-```
+    ```
+    =COUNTA(D3:D200)
+    ```
 
-G1 through L1: Show the number of individuals facilitating or participating in training instiute activities. These fields are also caclulated using COUNTA.
+    G1 through L1: Show the number of individuals facilitating or participating in training instiute activities. These fields are also caclulated using COUNTA.
 
-N1: Shows the number of individuals hosting a devotional gathering. Because this column was calculated using IF, every entry has a value. Instead of COUNTA, COUNTIF can be used:
+    N1: Shows the number of individuals hosting a devotional gathering. Because this column was calculated using IF, every entry has a value. Instead of COUNTA, COUNTIF can be used:
 
-```
-=COUNTIF(N3:N200, "Yes")
-```
+    ```
+    =COUNTIF(N3:N200, "Yes")
+    ```
 
-F. Froze the top two rows so that the summary and column headings are always visible using menue options:
+- Froze the top two rows so that the summary and column headings are always visible using menu options:
 
 ```
 View > Freeze > 2 rows
 ```
 
-G. Renamed the sheet "Participating and Sustaining
+- Renamed the sheet "Participating and Sustaining
 
-H. Added a second sheet "Sustaining" to capture just those facilitating activities. Add this sheet by duplicating the first.
+### A Second Sheet
 
-I. Unhide columns F and M. Then delete columns J - M and column F.
+The first sheet captured all currently engaged as participants or facilitators.
+A second sheet was created to just capture the facilitators as follows.
 
-J. Delete all the data
+- Duplicate the first sheet and renamed the copy as "Sustaining" meant to capture just those facilitating activities.
 
-K. Reinsert the data by setting A3 to:
+- Unhide columns F and M. Then delete columns J - M and column F.
 
-```
-=QUERY('Participating and Sustaining'!A3:N200,"SELECT A,B,C,D,E,G,H,I,N WHERE G='Yes' OR H='Yes'OR I='Yes'OR N='Yes'")
-```
+- Delete all the data
 
-This apporach means this second sheet will be automatically updated whenever the first sheet is updated.
+- Reinsert the data by setting A3 to:
+
+    ```
+    =QUERY('Participating and Sustaining'!A3:N200,
+    "SELECT A,B,C,D,E,G,H,I,N WHERE G='Yes' OR H='Yes'OR I='Yes'OR N='Yes'")
+    ```
+
+This approach is used so that when new data is generated, only the first sheet needs to be updated. The second sheet will be automatically updated.
 
 ## Considerations
 
 1. You will update data over time.
-Avoid cutting and pasting column by column by making sure that the target spreadsheet keeps all the columns in the same order. Use forumlas to copy columns to new locations and hide columns you don't want to appear.
+To avoid cutting and pasting column by column make siure that the raw data can be copied to a single place in the target spreadsheet. Use forumlae to copy columns to new locations and hide columns you don't want to appear.
 
-2. Here only 200 rows were included in the fomulae defined. This number should be large enough for as many indivudals as you expect.
+2. Here only 200 rows were included in the defined fomulae. This number should be large enough for as many indivudals as you expect.
 
 3. If some columns (such as **Comments**) are considered sensitive, hiding them may not be sufficient.
 Instead, create a second spreadsheet using `IMPORTRANGE` and `QUERY` selecting only the data you want to share.
